@@ -2,6 +2,7 @@ import streamlit as st
 from modules.parser import extract_text_from_pdf
 from modules.preprocessing import clean_text
 from modules.skill_extractor import load_skills, extract_skills
+from modules.similarity import calculate_similarity
 
 st.title("AI Resume Analyzer")
 
@@ -28,3 +29,13 @@ if resume:
     st.subheader("Extracted Resume Text")
 
     st.write(cleaned_text[:1000])
+
+job_desc = st.text_area("Paste Job Description")
+
+if job_desc:
+
+    score = calculate_similarity(cleaned_text, job_desc)
+
+    st.subheader("ATS Match Score")
+
+    st.write(f"{score}%")
