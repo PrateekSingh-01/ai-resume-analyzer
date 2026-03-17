@@ -3,6 +3,7 @@ from modules.parser import extract_text_from_pdf
 from modules.preprocessing import clean_text
 from modules.skill_extractor import load_skills, extract_skills
 from modules.similarity import calculate_similarity
+from modules.skill_gap import find_missing_skills
 
 st.title("AI Resume Analyzer")
 
@@ -39,3 +40,13 @@ if job_desc:
     st.subheader("ATS Match Score")
 
     st.write(f"{score}%")
+
+if job_desc:
+
+    job_skills = extract_skills(job_desc, skills_list)
+
+    missing_skills = find_missing_skills(detected_skills, job_skills)
+
+    st.subheader("Missing Skills for this Job")
+
+    st.write(missing_skills)
