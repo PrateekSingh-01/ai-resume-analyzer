@@ -6,6 +6,7 @@ from modules.skill_extractor import load_skills, extract_skills
 from modules.similarity import calculate_similarity
 from modules.skill_gap import find_missing_skills
 from modules.suggestions import generate_suggestions
+from modules.role_predictor import predict_role
 
 st.title("AI Resume Analyzer")
 
@@ -19,6 +20,8 @@ job_desc = st.text_area("Paste Job Description")
 
 
 if resume:
+
+    
 
     # Step 1: Extract text from resume
     raw_text = extract_text_from_pdf(resume)
@@ -45,6 +48,14 @@ if resume:
     skill_counts = skill_df.groupby("Skill").size().reset_index(name="Count")
 
     st.bar_chart(skill_counts.set_index("Skill"))
+
+    st.subheader("Predicted Job Role")
+
+    skill_text = " ".join(detected_skills)
+
+    predicted_role = predict_role(skill_text)
+
+    st.write(f"💼 {predicted_role}")
 
     # Only run these steps if job description is provided
     if job_desc:
