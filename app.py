@@ -9,6 +9,19 @@ from modules.skill_gap import find_missing_skills
 from modules.suggestions import generate_suggestions
 from modules.role_predictor import predict_role
 from modules.resume_score import calculate_resume_score, get_rating
+import modules.skill_category as skill_category_module
+
+
+def _resolve_categorize_skills():
+    # Handle small naming/export differences without crashing the app.
+    for fn_name in ("categorize_skills", "categorise_skills", "categorize_skill"):
+        fn = getattr(skill_category_module, fn_name, None)
+        if callable(fn):
+            return fn
+    return lambda _skills: {}
+
+
+categorize_skills = _resolve_categorize_skills()
 
 
 st.title("AI Resume Analyzer")
@@ -27,6 +40,7 @@ job_desc = st.text_area("Paste Job Description")
 detected_skills = []
 
 
+
 if resume:
 
     # -----------------------------
@@ -37,6 +51,15 @@ if resume:
 
     skills_list = load_skills()
     detected_skills = extract_skills(cleaned_text, skills_list)
+    st.subheader("Skill Categories")
+
+    category_data = categorize_skills(detected_skills)
+
+    if category_data:
+        for category, count in category_data.items():
+            st.write(f"{category} → {count}")
+    else:
+        st.info("No category data available.")
 
     st.divider()
 
